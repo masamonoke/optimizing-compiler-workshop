@@ -145,12 +145,11 @@ class LatticeVector:
         self.vec.append(value)
         self.n += 1
 
-
-def join(m_in: LatticeVector, pred: LatticeVector) -> LatticeVector:
-    """
-    Joins two vectors
-    """
-    return LatticeVector(m_in.n, [a.join(b) for a, b in zip(m_in, pred)])
+    def join(self, other: LatticeVector) -> LatticeVector:
+        """
+        Joins two vectors
+        """
+        return LatticeVector(self.n, [a.join(b) for a, b in zip(self, other)])
 
 
 @dataclass(eq=False)
@@ -232,7 +231,7 @@ def propagate_const(scope: Scope, max_iter: int = 10000):
         for block in scope.all_blocks:
             m_in: LatticeVector = LatticeVector(n)
             for pred in block.preds:
-                m_in = join(m_in, m[pred])
+                m_in = m_in.join(m[pred])
 
             assert block.transfer_function is not None
 
